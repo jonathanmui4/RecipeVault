@@ -15,6 +15,33 @@ Backend was developed with Java Springboot using Maven as a build tool and MySQL
 - h2 (Development db)
 - mysql-connector-j
 
+### Environment Setup
+
+#### 1. Clone the Repository
+```bash
+git clone https://github.com/your-username/your-repo.git
+cd your-repo/backend
+```
+
+#### 2. Database Configuration
+- H2 In-memory Database (h2 profile)
+  - No additional Setup required.
+- MySQL Database (dev profile)
+  - [MySQL Download](https://dev.mysql.com/downloads/)
+  - [MySQL Installation Guide](https://dev.mysql.com/doc/refman/8.0/en/installing.html)
+  ```sql
+  CREATE DATABASE recipevault;
+
+#### 3. Set Environment Variables for Database Credentials
+```bash
+export MYSQL_USERNAME=your_username
+export MYSQL_PASSWORD=your_password
+```
+- If using IntelliJ, setup Environment Variables in Run -> Edit Configuration -> Environment Variables, then setup Spring profile by going to Run -> Edit Configuration -> Modify Options -> Add VM Options and copy `-Dspring.profiles.active={profile_name}` in where profile_name is either h2, dev or prod.
+
+#### 4. Run Application 
+- `./mvnw spring-boot:run -Dspring.profiles.active={profile_name}`where profile_name is either h2, dev or prod.
+
 ### API routes
 - /api/recipes (Post) to create
 - /api/recipes (Get) to retrieve all
