@@ -31,6 +31,7 @@ public class RecipeEntity {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
+    // TODO: Update when implement imageURL, add getters and setters too
 //    @Column(name = "image_url")
 //     private String imageUrl;
 

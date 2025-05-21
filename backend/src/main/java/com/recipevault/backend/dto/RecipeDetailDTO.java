@@ -8,6 +8,7 @@ public class RecipeDetailDTO {
     private String title;
     private String difficulty;
     private String instructions;
+    // TODO: Update when implement imageURL
 //    private String imageUrl;
     private String creatorName;
     private LocalDateTime createdDate;
@@ -49,6 +50,7 @@ public class RecipeDetailDTO {
         this.instructions = instructions;
     }
 
+    // TODO: Update when implement imageURL
 //    public String getImageUrl() {
 //        return imageUrl;
 //    }

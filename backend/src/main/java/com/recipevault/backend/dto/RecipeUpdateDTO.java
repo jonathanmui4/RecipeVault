@@ -14,6 +14,7 @@ public class RecipeUpdateDTO {
 
     private String instructions;
 
+    // TODO: Update when implement imageURL
 //    private String imageUrl;
 
     private String creatorName;
@@ -49,6 +50,7 @@ public class RecipeUpdateDTO {
         this.instructions = instructions;
     }
 
+    // TODO: Update when implement imageURL
 //    public String getImageUrl() {
 //        return imageUrl;
 //    }

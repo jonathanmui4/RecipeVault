@@ -6,6 +6,7 @@ public class RecipeSummaryDTO {
     private Long id;
     private String title;
     private String difficulty;
+    // TODO: Update when implement imageURL
 //    private String imageUrl;
     private String creatorName;
     private LocalDateTime createdDate;
@@ -39,6 +40,7 @@ public class RecipeSummaryDTO {
         this.difficulty = difficulty;
     }
 
+    // TODO: Update when implement imageURL
 //    public String getImageUrl() {
 //        return imageUrl;
 //    }

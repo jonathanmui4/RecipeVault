@@ -13,6 +13,14 @@ import org.mapstruct.MappingTarget;
 
 import java.util.List;
 
+/*
+ * Mapper class responsible for converting between domain entities and DTOs used to transfer data between layers
+ * Seperation of concerns -> internal domain model (entities) decoupled from data structures exposed to client
+ * Data shaping -> controls exactly what data is exposed via API
+ * Reusability -> Centralize mapping logic
+ * Adaptability -> Change internal models or API independently as long as Mapper updated
+ */
+
 // Uses IngredientMapper when mapping Ingredient objects within a Recipe
 @Mapper(componentModel = "spring", uses = {IngredientMapper.class})
 public interface RecipeMapper {

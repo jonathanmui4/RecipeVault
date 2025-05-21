@@ -7,6 +7,14 @@ import org.mapstruct.Mapping;
 
 import java.util.List;
 
+/*
+ * Mapper class responsible for converting between domain entities and DTOs used to transfer data between layers
+ * Seperation of concerns -> internal domain model (entities) decoupled from data structures exposed to client
+ * Data shaping -> controls exactly what data is exposed via API
+ * Reusability -> Centralize mapping logic
+ * Adaptability -> Change internal models or API independently as long as Mapper updated
+ */
+
 // Makes mapper available for autowiring as Spring bean
 @Mapper(componentModel = "spring")
 public interface IngredientMapper {
