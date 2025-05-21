@@ -19,8 +19,7 @@ public class RecipeCreateDTO {
     @NotBlank(message = "Instructions are required")
     private String instructions;
 
-// TODO: Update when implement imageURL
-    //    private String imageUrl;
+    private String imageUrl;
 
     @NotBlank(message = "Creator name is required")
     private String creatorName;
@@ -54,14 +53,13 @@ public class RecipeCreateDTO {
         this.instructions = instructions;
     }
 
-// TODO: Update when implement imageURL
-    //    public String getImageUrl() {
-//        return imageUrl;
-//    }
-//
-//    public void setImageUrl(String imageUrl) {
-//        this.imageUrl = imageUrl;
-//    }
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
+    }
 
     public String getCreatorName() {
         return creatorName;

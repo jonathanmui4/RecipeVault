@@ -1,4 +1,4 @@
-package com.recipevault.backend.services;
+package com.recipevault.backend.services.impl;
 
 import com.recipevault.backend.dto.RecipeCreateDTO;
 import com.recipevault.backend.dto.RecipeDetailDTO;
@@ -9,6 +9,7 @@ import com.recipevault.backend.enums.Difficulty;
 import com.recipevault.backend.exceptions.ResourceNotFoundException;
 import com.recipevault.backend.mapper.RecipeMapper;
 import com.recipevault.backend.repositories.RecipeRepository;
+import com.recipevault.backend.services.RecipeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class RecipeServiceImpl implements RecipeService{
+public class RecipeServiceImpl implements RecipeService {
     private final RecipeRepository recipeRepository;
     private final RecipeMapper recipeMapper;
 
@@ -65,10 +66,10 @@ public class RecipeServiceImpl implements RecipeService{
         if (updateDTO.getInstructions() != null) {
             existingRecipe.setInstructions(updateDTO.getInstructions());
         }
-// TODO: Update when implement imageURL
-//        if (updateDTO.getImageUrl() != null) {
-//            existingRecipe.setImageUrl(updateDTO.getImageUrl());
-//        }
+
+        if (updateDTO.getImageUrl() != null) {
+            existingRecipe.setImageUrl(updateDTO.getImageUrl());
+        }
 
         if (updateDTO.getCreatorName() != null) {
             existingRecipe.setCreatorName(updateDTO.getCreatorName());

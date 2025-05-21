@@ -38,6 +38,7 @@ public interface RecipeMapper {
     @Mapping(target = "ingredients", ignore = true)
     @Mapping(target = "id", ignore = true)
     @Mapping(target = "createdDate", expression = "java(java.time.LocalDateTime.now())")
+    @Mapping(target = "imageUrl", source = "imageUrl")
     RecipeEntity toEntity(RecipeCreateDTO dto);
 
     // Maps data from RecipeUpdateDTO to existing recipe entity, only updating fields present in DTO

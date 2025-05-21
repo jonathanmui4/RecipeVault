@@ -31,9 +31,8 @@ public class RecipeEntity {
     @Column(name = "created_date")
     private LocalDateTime createdDate;
 
-    // TODO: Update when implement imageURL, add getters and setters too
-//    @Column(name = "image_url")
-//     private String imageUrl;
+    @Column(name = "image_url")
+     private String imageUrl;
 
     // One recipe to many ingredients
     // All operations performed on recipe entity cascades to related ingredients
@@ -87,6 +86,14 @@ public class RecipeEntity {
 
     public void setCreatedDate(LocalDateTime createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getImageUrl() {
+        return imageUrl;
+    }
+
+    public void setImageUrl(String imageUrl) {
+        this.imageUrl = imageUrl;
     }
 
     public List<IngredientEntity> getIngredients() {
