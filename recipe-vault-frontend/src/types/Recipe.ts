@@ -7,7 +7,7 @@ export type Ingredient =
   | string;
 
 export interface Recipe {
-  id?: number;
+  id: number;
   title: string;
   difficulty: 'EASY' | 'MEDIUM' | 'HARD';
   ingredients?: Ingredient[];
@@ -24,6 +24,7 @@ export interface RecipeFormData {
   ingredients: Ingredient[];
   instructions: string;
   imageUrl: string;
+  creatorName: string;
 }
 
 export const DifficultyLevels = {
