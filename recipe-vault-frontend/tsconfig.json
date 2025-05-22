@@ -1,32 +1,48 @@
 {
   "compilerOptions": {
+    /* Language and Environment */
     "target": "esnext",
-    "module": "esnext",
-    "strict": true,
+    "lib": ["esnext", "dom", "dom.iterable", "scripthost"],
     "jsx": "preserve",
+    "experimentalDecorators": true,
+    "useDefineForClassFields": true,
+    
+    /* Modules */
+    "module": "esnext",
     "moduleResolution": "node",
-    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["webpack-env", "jest"],
+    
+    /* JavaScript Support */
+    "allowJs": true,
+    "checkJs": false,
+    
+    /* Emit */
+    "sourceMap": true,
+    "declaration": false,
+    "outDir": "./dist",
+    "removeComments": false,
+    
+    /* Interop Constraints */
+    "isolatedModules": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-    "useDefineForClassFields": true,
-    "sourceMap": true,
-    "baseUrl": ".",
-    "types": [
-      "webpack-env",
-      "jest"
-    ],
-    "paths": {
-      "@/*": [
-        "src/*"
-      ]
-    },
-    "lib": [
-      "esnext",
-      "dom",
-      "dom.iterable",
-      "scripthost"
-    ]
+    
+    /* Type Checking */
+    "strict": true,
+    "noImplicitAny": true,
+    "strictNullChecks": true,
+    "noImplicitThis": true,
+    "noUnusedLocals": false, // Let ESLint handle this
+    "noUnusedParameters": false, // Let ESLint handle this
+    
+    /* Completeness */
+    "skipLibCheck": true, // Skip type checking node_modules
+    "resolveJsonModule": true
   },
   "include": [
     "src/**/*.ts",
@@ -36,6 +52,7 @@
     "tests/**/*.tsx"
   ],
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dist"
   ]
 }
