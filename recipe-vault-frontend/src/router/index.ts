@@ -1,12 +1,23 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
 import RecipeDetail from '@/views/RecipeDetail.vue';
+import RecipeForm from '@/views/RecipeForm.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
     component: Home,
+  },
+  {
+    path: '/create',
+    name: 'CreateRecipe',
+    component: RecipeForm,
+  },
+  {
+    path: '/edit/:id',
+    name: 'EditRecipe',
+    component: RecipeForm,
   },
   {
     path: '/recipe/:id',
