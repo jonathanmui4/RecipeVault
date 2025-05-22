@@ -11,7 +11,7 @@
           @update:model-value="$emit('update:search', $event)"
         >
           <template #prefix>
-            <Search />
+            <span class="icon-container"><Search class="button-icon" /></span>
           </template>
         </el-input>
       </div>
@@ -49,7 +49,7 @@
           size="large"
           @click="$emit('createRecipe')"
         >
-          <Plus />
+          <span class="icon-container"><Plus class="button-icon" /></span>
           Create Recipe
         </el-button>
       </div>
@@ -94,6 +94,18 @@ defineEmits<{
   display: flex;
   gap: 1rem;
   align-items: center;
+}
+
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
 }
 
 @media (max-width: 768px) {

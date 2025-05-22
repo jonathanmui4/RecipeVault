@@ -52,7 +52,7 @@
               class="custom-button"
               @click.stop="$emit('editRecipe', scope.row)"
             >
-              <Edit />
+              <span class="icon-container"><Edit class="button-icon" /></span>
               Edit
             </el-button>
             <el-button
@@ -60,7 +60,7 @@
               type="danger"
               @click.stop="$emit('deleteRecipe', scope.row)"
             >
-              <Delete />
+              <span class="icon-container"><Delete class="button-icon" /></span>
               Delete
             </el-button>
           </div>
@@ -130,6 +130,18 @@ const formatDate = (dateString: string) => {
   margin-top: 1rem;
   padding: 1rem;
   text-align: center;
+}
+
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
 }
 
 @media (max-width: 768px) {
