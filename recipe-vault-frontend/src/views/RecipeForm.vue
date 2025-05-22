@@ -96,7 +96,7 @@
           <el-button
             type="primary"
             class="custom-button"
-            :loading="recipeStore.loading"
+            :loading="uiStore.isLoading"
             size="large"
             @click="handleSubmit"
           >
@@ -123,10 +123,12 @@ import { useRouter, useRoute } from 'vue-router';
 import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
 import { Check, Back } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
+import { useUIStore } from '@/stores/ui';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
 import type { RecipeFormData } from '@/types/recipe';
 
 const recipeStore = useRecipeStore();
+const uiStore = useUIStore();
 const router = useRouter();
 const route = useRoute();
 

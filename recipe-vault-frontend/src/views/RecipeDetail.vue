@@ -1,5 +1,5 @@
 <template>
-  <div v-loading="recipeStore.loading" class="recipe-detail-page">
+  <div v-loading="uiStore.isLoading" class="recipe-detail-page">
     <div v-if="recipe" class="recipe-detail">
       <div class="recipe-header">
         <div class="header-content">
@@ -121,10 +121,12 @@ import {
   Document,
 } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
+import { useUIStore } from '@/stores/ui';
 import DifficultyBadge from '@/components/ui/DifficultyBadge.vue';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
 
 const recipeStore = useRecipeStore();
+const uiStore = useUIStore();
 const route = useRoute();
 
 const recipe = computed(() => recipeStore.currentRecipe);
