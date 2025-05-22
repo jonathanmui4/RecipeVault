@@ -306,7 +306,7 @@ export const recipeData: Recipe[] = [
       { id: 9, ingredientName: 'parmesan cheese' },
       { id: 10, ingredientName: 'black pepper' },
     ],
-    ingredientCount: 5,
+    ingredientCount: 12,
   },
   {
     id: 20,
@@ -324,7 +324,7 @@ export const recipeData: Recipe[] = [
       { id: 9, ingredientName: 'parmesan cheese' },
       { id: 10, ingredientName: 'black pepper' },
     ],
-    ingredientCount: 5,
+    ingredientCount: 8,
   },
   {
     id: 21,
@@ -342,7 +342,7 @@ export const recipeData: Recipe[] = [
       { id: 9, ingredientName: 'parmesan cheese' },
       { id: 10, ingredientName: 'black pepper' },
     ],
-    ingredientCount: 5,
+    ingredientCount: 20,
   },
   {
     id: 22,
@@ -360,7 +360,7 @@ export const recipeData: Recipe[] = [
       { id: 9, ingredientName: 'parmesan cheese' },
       { id: 10, ingredientName: 'black pepper' },
     ],
-    ingredientCount: 5,
+    ingredientCount: 7,
   },
 ];
 

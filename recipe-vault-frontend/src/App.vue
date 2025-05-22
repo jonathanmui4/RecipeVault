@@ -2,7 +2,7 @@
   <div class="app-container">
     <PageHeader />
     <main class="main-content">
-      <!-- <router-view /> -->
+      <router-view />
       <!-- <Home /> -->
       <!-- <RecipeForm /> -->
       <!-- <RecipeDetail /> -->
