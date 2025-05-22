@@ -1,13 +1,17 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '@/views/Home.vue';
-// HomeView is not used, so it's commented out
-// import HomeView from '../views/HomeView.vue';
+import RecipeDetail from '@/views/RecipeDetail.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
     name: 'home',
     component: Home,
+  },
+  {
+    path: '/recipe/:id',
+    name: 'RecipeDetail',
+    component: RecipeDetail,
   },
   // {
   //   path: '/about',
