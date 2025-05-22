@@ -39,9 +39,9 @@
               style="width: 100%"
               size="large"
             >
-              <el-option label="Easy" value="Easy" />
-              <el-option label="Medium" value="Medium" />
-              <el-option label="Hard" value="Hard" />
+              <el-option label="Easy" value="EASY" />
+              <el-option label="Medium" value="MEDIUM" />
+              <el-option label="Hard" value="HARD" />
             </el-select>
           </el-form-item>
 
@@ -100,7 +100,7 @@
             size="large"
             @click="handleSubmit"
           >
-            <Check />
+            <span class="icon-container"><Check class="button-icon" /></span>
             {{ isEdit ? 'Update Recipe' : 'Create Recipe' }}
           </el-button>
           <el-button
@@ -108,7 +108,7 @@
             size="large"
             @click="$router.push('/')"
           >
-            <Back />
+            <span class="icon-container"><Back class="button-icon" /></span>
             Cancel
           </el-button>
         </div>
@@ -370,6 +370,18 @@ onMounted(() => {
   margin-top: 2rem;
   padding-top: 1.5rem;
   border-top: 1px solid var(--light-color);
+}
+
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
 }
 
 @media (max-width: 768px) {

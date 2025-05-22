@@ -31,7 +31,7 @@
             :disabled="ingredients.length <= 1"
             @click="$emit('removeIngredient', index)"
           >
-            <Delete />
+            <span class="icon-container"><Delete class="button-icon" /></span>
           </el-button>
         </template>
         <template v-else>
@@ -56,7 +56,7 @@
         style="margin-top: 1rem; width: 100%"
         @click="$emit('addIngredient')"
       >
-        <Plus />
+        <span class="icon-container"><Plus class="plus-button-icon" /></span>
         Add Ingredient
       </el-button>
     </div>
@@ -123,6 +123,23 @@ const updateIngredient = (
   font-style: italic;
   text-align: center;
   padding: 1rem;
+}
+
+.icon-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.button-icon {
+  width: 16px;
+  height: 16px;
+}
+
+.plus-button-icon {
+  width: 16px;
+  height: 16px;
+  margin-right: 6px;
 }
 
 @media (max-width: 768px) {
