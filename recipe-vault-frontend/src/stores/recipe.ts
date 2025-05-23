@@ -1,6 +1,10 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { Recipe, RecipeFormData } from '@/types/recipe';
+import type { Recipe } from '@/types/recipe';
+import type {
+  BackendRecipeCreateRequest,
+  BackendRecipeUpdateRequest,
+} from '@/types/backend';
 import { recipeService } from '@/services/recipeService';
 import { useUIStore } from './ui';
 
@@ -44,7 +48,7 @@ export const useRecipeStore = defineStore('recipe', () => {
   };
 
   const createRecipe = async (
-    recipeData: RecipeFormData
+    recipeData: BackendRecipeCreateRequest
   ): Promise<Recipe | null> => {
     const uiStore = useUIStore();
     uiStore.setLoading(true);
@@ -66,7 +70,7 @@ export const useRecipeStore = defineStore('recipe', () => {
 
   const updateRecipe = async (
     id: string | number,
-    recipeData: RecipeFormData
+    recipeData: BackendRecipeUpdateRequest
   ): Promise<Recipe | null> => {
     const uiStore = useUIStore();
     uiStore.setLoading(true);
@@ -77,6 +81,9 @@ export const useRecipeStore = defineStore('recipe', () => {
         const index = recipes.value.findIndex((r) => r.id === updatedRecipe.id);
         if (index !== -1) {
           recipes.value[index] = updatedRecipe;
+        }
+        if (currentRecipe.value?.id === updatedRecipe.id) {
+          currentRecipe.value = updatedRecipe;
         }
         return updatedRecipe;
       }
@@ -98,6 +105,9 @@ export const useRecipeStore = defineStore('recipe', () => {
       if (success) {
         const numericId = Number(id);
         recipes.value = recipes.value.filter((r) => r.id !== numericId);
+        if (currentRecipe.value?.id === numericId) {
+          currentRecipe.value = null;
+        }
       }
       return success;
     } catch (error) {

@@ -125,6 +125,11 @@ import { Check, Back } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
 import { useUIStore } from '@/stores/ui';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
+import type {
+  BackendRecipeCreateRequest,
+  BackendRecipeUpdateRequest,
+} from '@/types/backend';
+import { convertIngredientsForBackend } from '@/utils/ingredientUtils';
 import type { RecipeFormData } from '@/types/recipe';
 
 const recipeStore = useRecipeStore();
@@ -214,49 +219,51 @@ const handleSubmit = async () => {
       return;
     }
 
-    // Filter valid ingredients and concatenate amount to ingredientName
-    const validIngredients = form.value.ingredients
-      .filter((ing) => ing.ingredientName?.trim() || (ing as any).name?.trim())
-      .map((ing) => {
-        // Handle ingredients that might have name instead of ingredientName
-        const name =
-          (ing as any).name?.trim() || ing.ingredientName?.trim() || '';
-        const amount = (ing as any).amount?.trim() || '';
+    // Use utility function to convert ingredients to backend format
+    const ingredientNames = convertIngredientsForBackend(
+      form.value.ingredients
+    );
 
-        return {
-          ingredientName: amount ? `${amount} ${name}` : name,
-        };
-      });
-
-    // TODO: User will not be hardcoded in the future
-    const recipeData: RecipeFormData = {
-      title: form.value.title,
-      difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
-      ingredients: validIngredients,
-      instructions: form.value.instructions,
-      imageUrl: form.value.imageUrl || '',
-      creatorName: 'TestUser',
-    };
-
-    let result;
     if (isEdit.value) {
-      result = await recipeStore.updateRecipe(recipeId.value, recipeData);
-      console.log('Updated recipe:', result);
-    } else {
-      result = await recipeStore.createRecipe(recipeData);
-      console.log('Created recipe:', result);
-    }
+      const updateData: BackendRecipeUpdateRequest = {
+        title: form.value.title,
+        difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
+        instructions: form.value.instructions,
+        imageUrl: form.value.imageUrl || '',
+        creatorName: 'TestUser', // TODO: Get from auth context
+        ingredientNames: ingredientNames,
+      };
 
-    if (result) {
-      ElMessage.success(
-        `Recipe ${isEdit.value ? 'updated' : 'created'} successfully!`
-      );
-      router.push('/');
+      const result = await recipeStore.updateRecipe(recipeId.value, updateData);
+
+      if (result) {
+        ElMessage.success('Recipe updated successfully!');
+        router.push('/');
+      } else {
+        ElMessage.error('Failed to update recipe');
+      }
     } else {
-      ElMessage.error(`Failed to ${isEdit.value ? 'update' : 'create'} recipe`);
+      const createData: BackendRecipeCreateRequest = {
+        title: form.value.title,
+        difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
+        instructions: form.value.instructions,
+        imageUrl: form.value.imageUrl || '',
+        creatorName: 'TestUser', // TODO: Get from auth context
+        ingredientNames: ingredientNames,
+      };
+
+      const result = await recipeStore.createRecipe(createData);
+
+      if (result) {
+        ElMessage.success('Recipe created successfully!');
+        router.push('/');
+      } else {
+        ElMessage.error('Failed to create recipe');
+      }
     }
   } catch (error) {
-    console.error('Form validation failed:', error);
+    console.error('Form submission failed:', error);
+    ElMessage.error('An error occurred while saving the recipe');
   }
 };
 

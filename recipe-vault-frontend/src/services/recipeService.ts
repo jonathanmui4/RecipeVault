@@ -1,6 +1,14 @@
 import { apiService } from './api';
 import type { Recipe, RecipeFormData } from '@/types/recipe';
 import { getInitialRecipeData } from '@/assets/recipeData';
+import { convertIngredientsFromBackend } from '@/utils/ingredientUtils';
+import type {
+  BackendRecipeCreateRequest,
+  BackendRecipeUpdateRequest,
+  BackendRecipeResponse,
+  BackendRecipeSummaryResponse,
+} from '@/types/backend';
+import { callWithErrorHandling } from 'vue';
 
 // For simulating API delays
 const simulateDelay = async (ms = 300) => {
@@ -20,26 +28,65 @@ export class RecipeService {
     return `https://picsum.photos/400/250?random=${randomId}`;
   }
 
+  // Convert backend response to frontend Recipe type
+  private mapBackendToFrontend(backendRecipe: BackendRecipeResponse): Recipe {
+    return {
+      id: backendRecipe.id,
+      title: backendRecipe.title,
+      difficulty: backendRecipe.difficulty,
+      instructions: backendRecipe.instructions,
+      imageUrl: backendRecipe.imageUrl,
+      creatorName: backendRecipe.creatorName,
+      createdDate: backendRecipe.createdDate,
+      ingredients: convertIngredientsFromBackend(
+        backendRecipe.ingredients || []
+      ),
+      ingredientCount: backendRecipe.ingredients?.length || 0,
+    };
+  }
+
+  private mapSummaryToFrontend(summary: BackendRecipeSummaryResponse): Recipe {
+    return {
+      id: summary.id,
+      title: summary.title,
+      difficulty: summary.difficulty,
+      imageUrl: summary.imageUrl,
+      creatorName: summary.creatorName,
+      createdDate: summary.createdDate,
+      ingredientCount: summary.ingredientCount,
+    };
+  }
+
   // Fetch all recipes
   async getAllRecipes(): Promise<Recipe[]> {
     try {
+      /* For sim with dummy data
       // Simulate API delay
       await simulateDelay();
 
       // Use dummy data for development
       return [...this.dummyData];
+      */
 
-      // Uncomment for real API implementation
-      // return await apiService.get<Recipe[]>('/recipes');
+      // real API implementation
+      const summaries = await apiService.get<BackendRecipeSummaryResponse[]>(
+        '/recipes'
+      );
+      return summaries.map((summary) => this.mapSummaryToFrontend(summary));
     } catch (error) {
       console.error('Error fetching recipes:', error);
-      return [];
+      // For sim with dummy data, return empty array
+      // return [];
+
+      // Real API implementation
+      throw error;
     }
   }
 
   // Fetch single recipe by ID
   async getRecipeById(id: string | number): Promise<Recipe | null> {
     try {
+      /* For sim with dummy data
       // Simulate API delay
       await simulateDelay();
 
@@ -54,18 +101,33 @@ export class RecipeService {
 
       // Return deep copy to avoid mutation issues
       return JSON.parse(JSON.stringify(recipe));
+      */
 
-      // Uncomment for real API implementation
-      // return await apiService.get<Recipe>(`/recipes/${id}`);
+      // Real API implementation
+      const backendRecipe = await apiService.get<BackendRecipeResponse>(
+        `/recipes/${id}`
+      );
+      return this.mapBackendToFrontend(backendRecipe);
     } catch (error) {
       console.error('Error fetching recipe:', error);
-      return null;
+
+      // For sim with dummy data, return null
+      // return null;
+
+      // Real API implementation
+      if ((error as any).status === 404) {
+        return null;
+      }
+      throw error;
     }
   }
 
   // Create new recipe
-  async createRecipe(recipeData: RecipeFormData): Promise<Recipe | null> {
+  async createRecipe(
+    recipeData: BackendRecipeCreateRequest
+  ): Promise<Recipe | null> {
     try {
+      /* For sim with dummy data
       // Simulate API delay
       await simulateDelay();
 
@@ -84,27 +146,37 @@ export class RecipeService {
       this.dummyData.push(newRecipe);
 
       return newRecipe;
+      */
 
-      // Uncomment for real API implementation
-      // const payload = {
-      //   ...recipeData,
-      //   creator_name: 'TestUser',
-      //   img_url: recipeData.imageUrl || this.getRandomImageUrl(),
-      //   ingredient_count: recipeData.ingredients.length,
-      // };
-      // return await apiService.post<Recipe>('/recipes', payload);
+      // Real API implementation
+      const payload: BackendRecipeCreateRequest = {
+        ...recipeData,
+        imageUrl: recipeData.imageUrl || this.getRandomImageUrl(),
+      };
+
+      const backendRecipe = await apiService.post<BackendRecipeResponse>(
+        '/recipes',
+        payload
+      );
+      return this.mapBackendToFrontend(backendRecipe);
     } catch (error) {
       console.error('Error creating recipe:', error);
-      return null;
+
+      // For sim with dummy data, return null
+      // return null;
+
+      // Real API implementation
+      throw error;
     }
   }
 
   // Update existing recipe
   async updateRecipe(
     id: string | number,
-    recipeData: RecipeFormData
+    recipeData: BackendRecipeUpdateRequest
   ): Promise<Recipe | null> {
     try {
+      /*
       // Simulate API delay
       await simulateDelay();
 
@@ -127,22 +199,28 @@ export class RecipeService {
       this.dummyData[index] = updatedRecipe;
 
       return updatedRecipe;
+      */
 
-      // Uncomment for real API implementation
-      // const payload = {
-      //   ...recipeData,
-      //   ingredient_count: recipeData.ingredients.length,
-      // };
-      // return await apiService.put<Recipe>(`/recipes/${id}`, payload);
+      // Real API implementation
+      const backendRecipe = await apiService.put<BackendRecipeResponse>(
+        `/recipes/${id}`,
+        recipeData
+      );
+      return this.mapBackendToFrontend(backendRecipe);
     } catch (error) {
       console.error('Error updating recipe:', error);
-      return null;
+      // For sim with dummy data, return null
+      // return null;
+
+      // Real API implementation
+      throw error;
     }
   }
 
   // Delete recipe
   async deleteRecipe(id: string | number): Promise<boolean> {
     try {
+      /* For sim with dummy data
       // Simulate API delay
       await simulateDelay();
 
@@ -152,10 +230,11 @@ export class RecipeService {
       this.dummyData = this.dummyData.filter((r) => r.id !== numericId);
 
       return this.dummyData.length < initialLength;
+      */
 
       // Uncomment for real API implementation
-      // await apiService.delete<void>(`/recipes/${id}`);
-      // return true;
+      await apiService.delete(`/recipes/${id}`);
+      return true;
     } catch (error) {
       console.error('Error deleting recipe:', error);
       return false;

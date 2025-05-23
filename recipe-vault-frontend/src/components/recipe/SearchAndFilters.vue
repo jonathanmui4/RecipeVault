@@ -25,9 +25,9 @@
           size="large"
           @update:model-value="$emit('update:difficulty', $event)"
         >
-          <el-option label="Easy" value="Easy" />
-          <el-option label="Medium" value="Medium" />
-          <el-option label="Hard" value="Hard" />
+          <el-option label="Easy" value="EASY" />
+          <el-option label="Medium" value="MEDIUM" />
+          <el-option label="Hard" value="HARD" />
         </el-select>
 
         <el-select
