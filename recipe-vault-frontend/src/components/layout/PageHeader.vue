@@ -1,5 +1,5 @@
 <template>
-  <header class="header">
+  <header class="header" :class="{ 'header-scrolled': isScrolled }">
     <div class="header-content">
       <router-link to="/" class="logo-link">
         <h1>🍳 Recipe Vault</h1>
@@ -7,7 +7,6 @@
 
       <div class="header-actions">
         <el-dropdown trigger="hover" placement="bottom-end">
-          <!-- Added placeholder pic for avatar -->
           <el-avatar
             class="user-avatar"
             :size="40"
@@ -33,11 +32,29 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue';
 import { User, SwitchButton } from '@element-plus/icons-vue';
+
+const isScrolled = ref(false);
+
+const handleScroll = () => {
+  isScrolled.value = window.scrollY > 10;
+};
+
+onMounted(() => {
+  window.addEventListener('scroll', handleScroll);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScroll);
+});
 </script>
 
 <style scoped lang="scss">
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
   background: linear-gradient(
     135deg,
     var(--primary-color) 0%,
@@ -46,6 +63,11 @@ import { User, SwitchButton } from '@element-plus/icons-vue';
   color: white;
   padding: 1rem 2rem;
   box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.3s ease;
+
+  &.header-scrolled {
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  }
 
   h1 {
     font-size: 2rem;
