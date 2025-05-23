@@ -15,11 +15,10 @@ export class ApiError extends Error {
 class ApiService {
   private client: AxiosInstance;
 
-  // TODO: Replace base URL with environment variable to toggle between dev and prod
   constructor() {
     this.client = axios.create({
-      baseURL: 'http://localhost:9000/api',
-      timeout: 10000,
+      baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:9000/api',
+      timeout: parseInt(process.env.VUE_APP_API_TIMEOUT || '10000'),
       headers: {
         'Content-Type': 'application/json',
       },
@@ -28,7 +27,6 @@ class ApiService {
     // Request interceptor
     this.client.interceptors.request.use(
       (config) => {
-        // Add auth headers, loading states, etc. here in the future
         console.log(
           `Making ${config.method?.toUpperCase()} request to ${config.url}`
         );
@@ -57,7 +55,6 @@ class ApiService {
 
   private getErrorMessage(error: AxiosError): string {
     if (error.response) {
-      // Server responded with error status
       const status = error.response.status;
       const data = error.response.data as any;
 
@@ -82,41 +79,34 @@ class ApiService {
           return `Request failed with status ${status}`;
       }
     } else if (error.request) {
-      // Network error
       return 'Network error - please check your connection';
     } else {
-      // Request setup error
       return error.message || 'An unexpected error occurred';
     }
   }
 
-  // GET requests
   async get<T>(endpoint: string): Promise<T> {
-    const response = await this.client.get<T>(endpoint);
+    const response = await this.client.get(endpoint);
     return response.data;
   }
 
-  // POST requests
   async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.post<T>(endpoint, data);
+    const response = await this.client.post(endpoint, data);
     return response.data;
   }
 
-  // PUT requests
   async put<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.put<T>(endpoint, data);
+    const response = await this.client.put(endpoint, data);
     return response.data;
   }
 
-  // DELETE requests
   async delete<T>(endpoint: string): Promise<T> {
-    const response = await this.client.delete<T>(endpoint);
+    const response = await this.client.delete(endpoint);
     return response.data;
   }
 
-  // PATCH requests
   async patch<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.patch<T>(endpoint, data);
+    const response = await this.client.patch(endpoint, data);
     return response.data;
   }
 }
