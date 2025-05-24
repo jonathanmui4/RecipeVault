@@ -1,0 +1,52 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: recipevault-mysql
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_DATABASE: recipevault
+      MYSQL_USER: ${MYSQL_USERNAME:-recipeuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-recipepass}
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql-data:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+    networks:
+      - recipevault-network
+
+  backend:
+    build: ./backend
+    container_name: recipevault-backend
+    depends_on:
+      mysql:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      MYSQL_USERNAME: ${MYSQL_USERNAME:-recipeuser}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-recipepass}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/recipevault?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+    ports:
+      - "9000:9000"
+    networks:
+      - recipevault-network
+
+  frontend:
+    build: ./recipe-vault-frontend
+    container_name: recipevault-frontend
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+    networks:
+      - recipevault-network
+
+volumes:
+  mysql-data:
+
+networks:
+  recipevault-network:
+    driver: bridge

@@ -16,9 +16,12 @@ class ApiService {
   private client: AxiosInstance;
 
   constructor() {
+    const baseURL = process.env.VUE_APP_API_BASE_URL || '/api';
+    const timeout = parseInt(process.env.VUE_APP_API_TIMEOUT || '10000');
+
     this.client = axios.create({
-      baseURL: process.env.VUE_APP_API_BASE_URL || 'http://localhost:9000/api',
-      timeout: parseInt(process.env.VUE_APP_API_TIMEOUT || '10000'),
+      baseURL,
+      timeout,
       headers: {
         'Content-Type': 'application/json',
       },
