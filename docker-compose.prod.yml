@@ -1,0 +1,45 @@
+# Production Docker Compose Override
+# Usage: docker-compose -f docker-compose.yml -f docker-compose.prod.yml up -d
+
+services:
+  mysql:
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: recipevault
+      MYSQL_USER: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+    # Remove port exposure in production (internal access only)
+    ports: []
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./backup:/backup  # Mount backup directory
+
+  backend:
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      MYSQL_USERNAME: ${MYSQL_USERNAME}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/recipevault?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=true&serverTimezone=UTC
+      JAVA_OPTS: ${JAVA_OPTS:--Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0}
+    # Remove port exposure in production (access via frontend proxy only)
+    ports: []
+    volumes:
+      - ./logs:/app/logs  # Mount logs directory
+
+  frontend:
+    # In production, you might want to use port 80 or 443
+    ports:
+      - "${FRONTEND_PORT:-80}:80"
+    environment:
+      - NODE_ENV=production
+    volumes:
+      - ./ssl:/etc/nginx/ssl:ro  # Mount SSL certificates if using HTTPS
+
+# Production-specific volumes
+volumes:
+  mysql-data:
+    driver: local
+    driver_opts:
+      type: none
+      o: bind
+      device: ${DATA_PATH:-./data/mysql}  # Bind to persistent storage path

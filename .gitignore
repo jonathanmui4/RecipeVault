@@ -1,3 +1,6 @@
 .DS_STORE
 .env
-
+/logs
+/ssl
+/data
+/backup
