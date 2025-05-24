@@ -25,14 +25,22 @@ services:
       mysql:
         condition: service_healthy
     environment:
-      SPRING_PROFILES_ACTIVE: dev
+      SPRING_PROFILES_ACTIVE: ${ENVIRONMENT:-dev}
       MYSQL_USERNAME: ${MYSQL_USERNAME:-recipeuser}
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-recipepass}
       SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/recipevault?createDatabaseIfNotExist=true&allowPublicKeyRetrieval=true&useSSL=false
+      JAVA_OPTS: ${JAVA_OPTS:--Xmx256m -Xms128m}
     ports:
       - "9000:9000"
     networks:
       - recipevault-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
   frontend:
     build: ./recipe-vault-frontend
@@ -43,6 +51,13 @@ services:
       - "3000:80"
     networks:
       - recipevault-network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:80"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
 
 volumes:
   mysql-data:
