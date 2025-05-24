@@ -47,19 +47,29 @@
 
           <el-form-item label="Recipe Image" prop="imageUrl">
             <div style="width: 100%">
-              <el-input
-                v-model="form.imageUrl"
-                placeholder="Image URL (optional - will use random if empty)"
-                size="large"
-              />
-              <div v-if="form.imageUrl" style="margin-top: 1rem">
-                <img
-                  :src="form.imageUrl"
-                  alt="Recipe preview"
-                  class="recipe-image-preview"
-                  @error="handleImageError"
-                />
-              </div>
+              <el-upload
+                ref="uploadRef"
+                :action="''"
+                :auto-upload="false"
+                :on-change="handleFileChange"
+                :on-remove="handleFileRemove"
+                :before-upload="beforeUpload"
+                :file-list="fileList"
+                list-type="picture-card"
+                :limit="1"
+                accept="image/*"
+                drag
+              >
+                <div class="upload-trigger">
+                  <el-icon class="el-icon--upload"><upload-filled /></el-icon>
+                  <div class="el-upload__text">
+                    Drop image here or <em>click to upload</em>
+                  </div>
+                  <div class="el-upload__tip">
+                    jpg/png files with size less than 5MB
+                  </div>
+                </div>
+              </el-upload>
             </div>
           </el-form-item>
         </div>
@@ -120,8 +130,15 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
-import { ElMessage, type FormInstance, type FormRules } from 'element-plus';
-import { Check, Back } from '@element-plus/icons-vue';
+import {
+  ElMessage,
+  type FormInstance,
+  type FormRules,
+  type UploadFile,
+  type UploadFiles,
+  type UploadInstance,
+} from 'element-plus';
+import { Check, Back, UploadFilled } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
 import { useUIStore } from '@/stores/ui';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
@@ -131,6 +148,7 @@ import type {
 } from '@/types/backend';
 import { convertIngredientsForBackend } from '@/utils/ingredientUtils';
 import type { RecipeFormData } from '@/types/recipe';
+import { imageUploadService } from '@/services/imageUploadService';
 
 const recipeStore = useRecipeStore();
 const uiStore = useUIStore();
@@ -138,8 +156,12 @@ const router = useRouter();
 const route = useRoute();
 
 const formRef = ref<FormInstance>();
+const uploadRef = ref<UploadInstance>();
 const isEdit = computed(() => route.name === 'EditRecipe');
 const recipeId = computed(() => route.params.id as string);
+
+const fileList = ref<UploadFiles>([]);
+const selectedFile = ref<File | null>(null);
 
 const form = ref<RecipeFormData>({
   title: '',
@@ -163,6 +185,13 @@ const rules: FormRules = {
     {
       required: true,
       message: 'Please select difficulty level',
+      trigger: 'change',
+    },
+  ],
+  imageUrl: [
+    {
+      required: true,
+      message: 'Recipe image is required',
       trigger: 'change',
     },
   ],
@@ -194,8 +223,54 @@ const removeIngredient = (index: number) => {
   }
 };
 
-const handleImageError = () => {
-  ElMessage.warning('Failed to load image');
+const beforeUpload = (file: File): boolean => {
+  const isValidType = [
+    'image/jpeg',
+    'image/jpg',
+    'image/png',
+    'image/gif',
+  ].includes(file.type);
+  const isValidSize = file.size / 1024 / 1024 < 5; // 5MB limit
+
+  if (!isValidType) {
+    ElMessage.error('Only JPG, PNG, and GIF images are allowed!');
+    return false;
+  }
+  if (!isValidSize) {
+    ElMessage.error('Image must be smaller than 5MB!');
+    return false;
+  }
+  return true;
+};
+
+const handleFileChange = (file: UploadFile) => {
+  if (file.raw) {
+    selectedFile.value = file.raw;
+    fileList.value = [file];
+    // Update form value to trigger validation
+    form.value.imageUrl = 'temp-value';
+    // Manually trigger validation for imageUrl field
+    formRef.value?.validateField('imageUrl');
+  }
+};
+
+const handleFileRemove = async (file: UploadFile) => {
+  try {
+    // If this is an existing image (has a URL), delete it from the server
+    if (file.url && file.url !== 'temp-value') {
+      await imageUploadService.deleteImage(file.url);
+      ElMessage.success('Image deleted successfully');
+    }
+
+    selectedFile.value = null;
+    fileList.value = [];
+    form.value.imageUrl = '';
+    // Manually trigger validation for imageUrl field
+    formRef.value?.validateField('imageUrl');
+  } catch (error) {
+    console.error('Error deleting image:', error);
+    ElMessage.error('Failed to delete image');
+  }
 };
 
 const validateIngredients = (): boolean => {
@@ -211,12 +286,47 @@ const validateIngredients = (): boolean => {
   return true;
 };
 
+const validateImageUpload = (): boolean => {
+  // Check if it's a new recipe and no image is selected
+  if (!isEdit.value && !selectedFile.value && !form.value.imageUrl) {
+    ElMessage.error('Please upload an image for your recipe');
+    return false;
+  }
+
+  // Check if it's an edit and image was removed but no new one selected
+  if (isEdit.value && !selectedFile.value && !form.value.imageUrl) {
+    ElMessage.error('Please upload an image for your recipe');
+    return false;
+  }
+
+  return true;
+};
+
 const handleSubmit = async () => {
   try {
     await formRef.value?.validate();
 
     if (!validateIngredients()) {
       return;
+    }
+
+    if (!validateImageUpload()) {
+      return;
+    }
+
+    // Upload image first if a file is selected
+    let imageUrl = form.value.imageUrl;
+    if (selectedFile.value) {
+      try {
+        uiStore.setLoading(true);
+        ElMessage.info('Uploading image...');
+        imageUrl = await imageUploadService.uploadImage(selectedFile.value);
+        ElMessage.success('Image uploaded successfully!');
+      } catch (error) {
+        console.error('Image upload failed:', error);
+        ElMessage.error('Failed to upload image. Please try again.');
+        return;
+      }
     }
 
     // Use utility function to convert ingredients to backend format
@@ -229,7 +339,7 @@ const handleSubmit = async () => {
         title: form.value.title,
         difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
         instructions: form.value.instructions,
-        imageUrl: form.value.imageUrl || '',
+        imageUrl: imageUrl || '',
         creatorName: 'TestUser', // TODO: Get from auth context
         ingredientNames: ingredientNames,
       };
@@ -247,7 +357,7 @@ const handleSubmit = async () => {
         title: form.value.title,
         difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
         instructions: form.value.instructions,
-        imageUrl: form.value.imageUrl || '',
+        imageUrl: imageUrl || '',
         creatorName: 'TestUser', // TODO: Get from auth context
         ingredientNames: ingredientNames,
       };
@@ -307,6 +417,18 @@ const loadRecipeForEdit = async () => {
         imageUrl: recipe.imageUrl || '',
         creatorName: recipe.creatorName || 'TestUser',
       };
+
+      // If there's an existing image URL, show it in the upload component
+      if (recipe.imageUrl) {
+        fileList.value = [
+          {
+            name: 'existing-image',
+            url: recipe.imageUrl,
+            status: 'success',
+            uid: Date.now(),
+          },
+        ];
+      }
     }
   }
 };
@@ -363,13 +485,45 @@ onMounted(() => {
   }
 }
 
-.recipe-image-preview {
+:deep(.el-upload) {
   width: 100%;
-  max-width: 300px;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-  border: 3px solid var(--accent-color);
+}
+
+:deep(.el-upload-dragger) {
+  width: 100% !important;
+  height: auto !important;
+  padding: 1.5rem !important;
+  border: 2px dashed var(--accent-color) !important;
+  border-radius: 8px !important;
+  background-color: #fafafa !important;
+  transition: all 0.3s !important;
+
+  &:hover {
+    background-color: #f0f0f0 !important;
+    border-color: var(--primary-color) !important;
+  }
+}
+
+.upload-trigger {
+  text-align: center;
+  width: 100%;
+
+  .el-icon--upload {
+    font-size: 1.5rem;
+    color: var(--primary-color);
+    margin-bottom: 0.8rem;
+  }
+
+  .el-upload__text {
+    color: var(--dark-color);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .el-upload__tip {
+    color: var(--primary-color);
+    font-size: 0.9rem;
+  }
 }
 
 .form-actions {
