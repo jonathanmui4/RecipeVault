@@ -16,8 +16,14 @@ FROM nginx:alpine
 
 COPY --from=build /app/dist /usr/share/nginx/html
 
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+# Copy both nginx configs
+COPY nginx.conf /etc/nginx/conf.d/docker.conf
+COPY nginx.railway.conf /etc/nginx/conf.d/railway.conf
+
+# Copy startup script that chooses config based on environment
+COPY start-nginx.sh /start-nginx.sh
+RUN chmod +x /start-nginx.sh
 
 EXPOSE 80
 
-CMD ["nginx", "-g", "daemon off;"]
+CMD ["/start-nginx.sh"]

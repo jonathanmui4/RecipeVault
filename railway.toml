@@ -1,8 +1,7 @@
 [build]
-builder = "dockerfile"
-dockerfilePath = "Dockerfile"
+builder = "nixpacks"
 
 [deploy]
-healthcheckPath = "/"
+healthcheckPath = "/actuator/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
