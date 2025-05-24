@@ -3,10 +3,10 @@ services:
     image: mysql:8.0
     container_name: recipevault-mysql
     environment:
-      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword}
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD:-rootpassword} #rootpassword will be default value passed if no .env file is present
       MYSQL_DATABASE: recipevault
-      MYSQL_USER: ${MYSQL_USERNAME:-recipeuser}
-      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-recipepass}
+      MYSQL_USER: ${MYSQL_USERNAME:-recipeuser} #recipeuser will be default value passed if no .env file is present
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD:-recipepass} #recipepass will be default value passed if no .env file is present
     ports:
       - "3306:3306"
     volumes:
