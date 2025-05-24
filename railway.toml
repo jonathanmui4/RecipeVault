@@ -5,3 +5,8 @@ builder = "nixpacks"
 healthcheckPath = "/actuator/health"
 healthcheckTimeout = 100
 restartPolicyType = "on_failure"
+
+# Erase this if want spring to run on default
+[[deploy.environmentVariables]]
+name = "SPRING_PROFILES_ACTIVE"
+value = "railway"
