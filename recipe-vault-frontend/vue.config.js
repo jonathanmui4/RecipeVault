@@ -7,7 +7,7 @@ module.exports = defineConfig({
       config.plugins.delete('fork-ts-checker');
     }
   },
-  // Add this devServer configuration
+  // Add devServer configuration
   devServer: {
     port: 3000,
     proxy: {
