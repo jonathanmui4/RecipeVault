@@ -1,6 +1,6 @@
 import { apiService } from './api';
 import type { Recipe, RecipeFormData } from '@/types/recipe';
-import { getInitialRecipeData } from '@/assets/recipeData';
+// import { getInitialRecipeData } from '@/assets/recipeData';
 import { convertIngredientsFromBackend } from '@/utils/ingredientUtils';
 import type {
   BackendRecipeCreateRequest,
@@ -17,7 +17,7 @@ const simulateDelay = async (ms = 300) => {
 
 export class RecipeService {
   // Store dummy data for simulation
-  private dummyData: Recipe[] = getInitialRecipeData();
+  // private dummyData: Recipe[] = getInitialRecipeData();
 
   // Get random image URL for placeholder
   private getRandomImageUrl(): string {
