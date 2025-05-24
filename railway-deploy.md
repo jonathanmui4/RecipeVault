@@ -4,16 +4,28 @@
 
 Set these in your Railway project dashboard:
 
+### Essential Variables:
 ```bash
 SPRING_PROFILES_ACTIVE=railway
+```
+
+### Optional Performance Variables:
+```bash
 JAVA_OPTS=-Xmx512m -Xms256m -XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0
 ```
 
 ## Database Setup
 
-1. Add MySQL service in Railway dashboard
-2. Railway will automatically provide `DATABASE_URL` environment variable
-3. No need to set individual MySQL variables - Railway handles this
+1. **Add MySQL service** in Railway dashboard
+2. Railway automatically provides these environment variables:
+   - `DATABASE_URL` - Full database connection string
+   - `MYSQLUSER` - Database username  
+   - `MYSQLPASSWORD` - Database password
+   - `MYSQLHOST` - Database host
+   - `MYSQLPORT` - Database port
+   - `MYSQLDATABASE` - Database name
+
+3. **No manual database configuration needed** - Railway handles everything!
 
 ## Deploy Steps
 
