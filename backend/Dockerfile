@@ -36,9 +36,9 @@ USER appuser
 
 EXPOSE 9000
 
-# Add health check
+# Add health check (use dynamic PORT from Railway)
 HEALTHCHECK --interval=30s --timeout=3s --start-period=30s --retries=3 \
-  CMD curl -f http://localhost:9000/actuator/health || exit 1
+  CMD curl -f http://localhost:${PORT:-9000}/actuator/health || exit 1
 
 # Production-optimized JVM settings
 ENTRYPOINT ["java", "-XX:+UseContainerSupport", "-XX:MaxRAMPercentage=75.0", "-XX:+ExitOnOutOfMemoryError", "-Djava.security.egd=file:/dev/./urandom", "-jar", "app.jar"]
