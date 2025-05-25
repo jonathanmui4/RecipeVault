@@ -111,8 +111,8 @@ class ApiService {
     return response.data;
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.post(endpoint, data);
+  async post<T>(endpoint: string, data?: unknown, config?: any): Promise<T> {
+    const response = await this.client.post(endpoint, data, config);
     return response.data;
   }
 
@@ -121,8 +121,8 @@ class ApiService {
     return response.data;
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    const response = await this.client.delete(endpoint);
+  async delete<T>(endpoint: string, config?: any): Promise<T> {
+    const response = await this.client.delete(endpoint, config);
     return response.data;
   }
 
