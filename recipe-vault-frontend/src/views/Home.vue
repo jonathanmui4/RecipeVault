@@ -12,28 +12,6 @@
       @create-recipe="handleCreateRecipe"
     />
 
-    <!-- Filter Tabs -->
-    <div v-if="authStore.isAuthenticated" class="filter-tabs">
-      <el-tabs v-model="activeTab" @tab-change="handleTabChange">
-        <el-tab-pane label="All Recipes" name="all">
-          <template #label>
-            <span class="tab-label">
-              <Globe class="tab-icon" />
-              All Recipes
-            </span>
-          </template>
-        </el-tab-pane>
-        <el-tab-pane label="My Recipes" name="my-recipes">
-          <template #label>
-            <span class="tab-label">
-              <User class="tab-icon" />
-              My Recipes
-            </span>
-          </template>
-        </el-tab-pane>
-      </el-tabs>
-    </div>
-
     <RecipeStats :recipes="displayedRecipes" />
 
     <RecipeTable
@@ -83,7 +61,7 @@
 import { computed, onMounted, ref, watch } from 'vue';
 import { useRouter, useRoute } from 'vue-router';
 import { ElMessageBox, ElMessage } from 'element-plus';
-import { Globe, User, Plus, Document } from '@element-plus/icons-vue';
+import { Plus, Document } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
 import { useUIStore } from '@/stores/ui';
 import { useAuthStore } from '@/stores/auth';
@@ -278,26 +256,6 @@ onMounted(() => {
     color: var(--primary-color);
     font-size: 1.2rem;
   }
-}
-
-.filter-tabs {
-  background: white;
-  border-radius: 12px;
-  padding: 1rem 1.5rem 0;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-  border: 2px solid var(--accent-color);
-}
-
-.tab-label {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-weight: 500;
-}
-
-.tab-icon {
-  width: 16px;
-  height: 16px;
 }
 
 .empty-state {
