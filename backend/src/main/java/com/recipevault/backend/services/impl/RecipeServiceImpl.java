@@ -14,6 +14,7 @@ import com.recipevault.backend.repositories.RecipeRepository;
 import com.recipevault.backend.services.RecipeService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -31,7 +32,9 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     public List<RecipeSummaryDTO> getAllRecipes() {
-        List<RecipeEntity> recipes = recipeRepository.findAll();
+        List<RecipeEntity> recipes = recipeRepository.findAll(
+                Sort.by(Sort.Direction.DESC, "createdDate")
+        );
         return recipeMapper.toSummaryDTOList(recipes);
     }
 
