@@ -67,25 +67,6 @@
                 /></span>
                 Delete
               </el-button>
-              <el-button
-                size="small"
-                type="primary"
-                class="custom-button"
-                @click.stop="$emit('editRecipe', scope.row)"
-              >
-                <span class="icon-container"><Edit class="button-icon" /></span>
-                Edit
-              </el-button>
-              <el-button
-                size="small"
-                type="danger"
-                @click.stop="$emit('deleteRecipe', scope.row)"
-              >
-                <span class="icon-container"
-                  ><Delete class="button-icon"
-                /></span>
-                Delete
-              </el-button>
             </template>
 
             <!-- Show view button for other recipes -->
