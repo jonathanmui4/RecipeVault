@@ -1,7 +1,7 @@
 package com.recipevault.backend.controller;
 
 import com.recipevault.backend.dto.ErrorResponseDTO;
-import com.recipevault.backend.dto.ImageUploadResponseDTO;
+import com.recipevault.backend.dto.recipes.ImageUploadResponseDTO;
 import com.recipevault.backend.services.ImageUploadService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

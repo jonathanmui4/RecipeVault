@@ -19,4 +19,10 @@ app.use(ElementPlus);
 app.use(pinia);
 app.use(router);
 
-app.mount('#app');
+// Initialize authentication before mounting
+import { useAuthStore } from '@/stores/auth';
+const authStore = useAuthStore();
+
+authStore.initializeAuth().then(() => {
+  app.mount('#app');
+});

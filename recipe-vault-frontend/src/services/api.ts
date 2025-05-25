@@ -51,6 +51,15 @@ class ApiService {
         const code = error.code;
         const data = error.response?.data;
 
+        // Handle authentication errors
+        if (status === 401) {
+          // Token expired or invalid - trigger logout
+          import('@/stores/auth').then(({ useAuthStore }) => {
+            const authStore = useAuthStore();
+            authStore.logout();
+          });
+        }
+
         throw new ApiError(message, status, code, data);
       }
     );
@@ -88,13 +97,22 @@ class ApiService {
     }
   }
 
+  // For auth token management
+  setAuthToken(token: string): void {
+    this.client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+
+  removeAuthToken(): void {
+    delete this.client.defaults.headers.common['Authorization'];
+  }
+
   async get<T>(endpoint: string): Promise<T> {
     const response = await this.client.get(endpoint);
     return response.data;
   }
 
-  async post<T>(endpoint: string, data?: unknown): Promise<T> {
-    const response = await this.client.post(endpoint, data);
+  async post<T>(endpoint: string, data?: unknown, config?: any): Promise<T> {
+    const response = await this.client.post(endpoint, data, config);
     return response.data;
   }
 
@@ -103,8 +121,8 @@ class ApiService {
     return response.data;
   }
 
-  async delete<T>(endpoint: string): Promise<T> {
-    const response = await this.client.delete(endpoint);
+  async delete<T>(endpoint: string, config?: any): Promise<T> {
+    const response = await this.client.delete(endpoint, config);
     return response.data;
   }
 

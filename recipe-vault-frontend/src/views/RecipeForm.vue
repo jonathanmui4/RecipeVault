@@ -141,6 +141,7 @@ import {
 import { Check, Back, UploadFilled } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
 import { useUIStore } from '@/stores/ui';
+import { useAuthStore } from '@/stores/auth';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
 import type {
   BackendRecipeCreateRequest,
@@ -152,6 +153,7 @@ import { imageUploadService } from '@/services/imageUploadService';
 
 const recipeStore = useRecipeStore();
 const uiStore = useUIStore();
+const authStore = useAuthStore();
 const router = useRouter();
 const route = useRoute();
 
@@ -340,7 +342,7 @@ const handleSubmit = async () => {
         difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
         instructions: form.value.instructions,
         imageUrl: imageUrl || '',
-        creatorName: 'TestUser', // TODO: Get from auth context
+        creatorName: authStore.userDisplayName,
         ingredientNames: ingredientNames,
       };
 
@@ -358,7 +360,7 @@ const handleSubmit = async () => {
         difficulty: form.value.difficulty as 'EASY' | 'MEDIUM' | 'HARD',
         instructions: form.value.instructions,
         imageUrl: imageUrl || '',
-        creatorName: 'TestUser', // TODO: Get from auth context
+        creatorName: authStore.userDisplayName,
         ingredientNames: ingredientNames,
       };
 
@@ -415,7 +417,7 @@ const loadRecipeForEdit = async () => {
         ingredients: processedIngredients,
         instructions: recipe.instructions || '',
         imageUrl: recipe.imageUrl || '',
-        creatorName: recipe.creatorName || 'TestUser',
+        creatorName: recipe.creatorName || authStore.userDisplayName,
       };
 
       // If there's an existing image URL, show it in the upload component

@@ -47,6 +47,22 @@ export const useRecipeStore = defineStore('recipe', () => {
     }
   };
 
+  const fetchMyRecipes = async (): Promise<Recipe[]> => {
+    const uiStore = useUIStore();
+    uiStore.setLoading(true);
+
+    try {
+      // This will call the /api/recipes/my-recipes endpoint
+      const data = await recipeService.getMyRecipes();
+      return data;
+    } catch (error) {
+      console.error('Error fetching my recipes:', error);
+      return [];
+    } finally {
+      uiStore.setLoading(false);
+    }
+  };
+
   const createRecipe = async (
     recipeData: BackendRecipeCreateRequest
   ): Promise<Recipe | null> => {
@@ -125,6 +141,7 @@ export const useRecipeStore = defineStore('recipe', () => {
 
     // Actions
     fetchRecipes,
+    fetchMyRecipes,
     fetchRecipe,
     createRecipe,
     updateRecipe,

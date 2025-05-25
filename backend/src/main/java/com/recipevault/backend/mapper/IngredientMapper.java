@@ -1,6 +1,6 @@
 package com.recipevault.backend.mapper;
 
-import com.recipevault.backend.dto.IngredientDTO;
+import com.recipevault.backend.dto.recipes.IngredientDTO;
 import com.recipevault.backend.entities.IngredientEntity;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

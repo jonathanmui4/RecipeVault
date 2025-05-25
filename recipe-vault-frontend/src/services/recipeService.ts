@@ -38,6 +38,7 @@ export class RecipeService {
       imageUrl: backendRecipe.imageUrl,
       creatorName: backendRecipe.creatorName,
       createdDate: backendRecipe.createdDate,
+      userId: backendRecipe.userId,
       ingredients: convertIngredientsFromBackend(
         backendRecipe.ingredients || []
       ),
@@ -53,6 +54,7 @@ export class RecipeService {
       imageUrl: summary.imageUrl,
       creatorName: summary.creatorName,
       createdDate: summary.createdDate,
+      userId: summary.userId,
       ingredientCount: summary.ingredientCount,
     };
   }
@@ -79,6 +81,19 @@ export class RecipeService {
       // return [];
 
       // Real API implementation
+      throw error;
+    }
+  }
+
+  // Fetch my recipes
+  async getMyRecipes(): Promise<Recipe[]> {
+    try {
+      const summaries = await apiService.get<BackendRecipeSummaryResponse[]>(
+        '/recipes/my-recipes'
+      );
+      return summaries.map((summary) => this.mapSummaryToFrontend(summary));
+    } catch (error) {
+      console.error('Error fetching my recipes:', error);
       throw error;
     }
   }

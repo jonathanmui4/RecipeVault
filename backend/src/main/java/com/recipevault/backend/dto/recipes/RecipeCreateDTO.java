@@ -1,28 +1,32 @@
-package com.recipevault.backend.dto;
+package com.recipevault.backend.dto.recipes;
 
-import java.time.LocalDateTime;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
-public class RecipeDetailDTO {
-    private Long id;
+public class RecipeCreateDTO {
+    @NotBlank(message = "Title is required")
+    @Size(max = 255, message = "Title must be less than 255 characters")
     private String title;
+
+    @NotNull(message = "Difficulty is required")
+    @Pattern(regexp = "EASY|MEDIUM|HARD", message = "Difficulty must be EASY, MEDIUM, or HARD")
     private String difficulty;
+
+    @NotBlank(message = "Instructions are required")
     private String instructions;
+
     private String imageUrl;
+
+    // Obtained from authenticated user
     private String creatorName;
-    private LocalDateTime createdDate;
-    private List<IngredientDTO> ingredients;
 
-    // Default Constructor
-    public RecipeDetailDTO() {
-    }
+    private List<String> ingredientNames;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public RecipeCreateDTO() {
     }
 
     public String getTitle() {
@@ -65,19 +69,11 @@ public class RecipeDetailDTO {
         this.creatorName = creatorName;
     }
 
-    public LocalDateTime getCreatedDate() {
-        return createdDate;
+    public List<String> getIngredientNames() {
+        return ingredientNames;
     }
 
-    public void setCreatedDate(LocalDateTime createdDate) {
-        this.createdDate = createdDate;
-    }
-
-    public List<IngredientDTO> getIngredients() {
-        return ingredients;
-    }
-
-    public void setIngredients(List<IngredientDTO> ingredients) {
-        this.ingredients = ingredients;
+    public void setIngredientNames(List<String> ingredientNames) {
+        this.ingredientNames = ingredientNames;
     }
 }

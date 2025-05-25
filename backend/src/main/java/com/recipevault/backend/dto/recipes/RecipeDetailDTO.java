@@ -1,30 +1,33 @@
-package com.recipevault.backend.dto;
+package com.recipevault.backend.dto.recipes;
 
-import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Size;
-
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
-public class RecipeUpdateDTO {
-    @Size(max = 255, message = "Title must be less than 255 characters")
+public class RecipeDetailDTO {
+    private Long id;
     private String title;
-
-    @Pattern(regexp = "EASY|MEDIUM|HARD", message = "Difficulty must be EASY, MEDIUM, or HARD")
     private String difficulty;
-
     private String instructions;
-
     private String imageUrl;
-
     private String creatorName;
+    private LocalDateTime createdDate;
+    private List<IngredientDTO> ingredients;
 
-    private List<String> ingredientNames;
+    private UUID userId; // For ownership checking
 
-    // Default constructor
-    public RecipeUpdateDTO() {
+    // Default Constructor
+    public RecipeDetailDTO() {
     }
 
-    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -65,11 +68,27 @@ public class RecipeUpdateDTO {
         this.creatorName = creatorName;
     }
 
-    public List<String> getIngredientNames() {
-        return ingredientNames;
+    public LocalDateTime getCreatedDate() {
+        return createdDate;
     }
 
-    public void setIngredientNames(List<String> ingredientNames) {
-        this.ingredientNames = ingredientNames;
+    public void setCreatedDate(LocalDateTime createdDate) {
+        this.createdDate = createdDate;
+    }
+
+    public List<IngredientDTO> getIngredients() {
+        return ingredients;
+    }
+
+    public void setIngredients(List<IngredientDTO> ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }
