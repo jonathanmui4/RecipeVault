@@ -32,6 +32,7 @@ export interface BackendRecipeResponse {
   imageUrl: string;
   creatorName: string;
   createdDate: string; // ISO string like "2025-05-23T00:06:06.22185"
+  userId: string; // User ID who created the recipe
   ingredients: BackendIngredientResponse[];
 }
 
@@ -43,6 +44,7 @@ export interface BackendRecipeSummaryResponse {
   imageUrl: string;
   creatorName: string;
   createdDate: string; // ISO string like "2025-05-23T00:06:06.22185"
+  userId: string; // User ID who created the recipe
   ingredientCount: number;
 }
 

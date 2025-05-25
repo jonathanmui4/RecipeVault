@@ -38,6 +38,7 @@ export class RecipeService {
       imageUrl: backendRecipe.imageUrl,
       creatorName: backendRecipe.creatorName,
       createdDate: backendRecipe.createdDate,
+      userId: backendRecipe.userId,
       ingredients: convertIngredientsFromBackend(
         backendRecipe.ingredients || []
       ),
@@ -53,6 +54,7 @@ export class RecipeService {
       imageUrl: summary.imageUrl,
       creatorName: summary.creatorName,
       createdDate: summary.createdDate,
+      userId: summary.userId,
       ingredientCount: summary.ingredientCount,
     };
   }
