@@ -2,6 +2,7 @@ package com.recipevault.backend.dto.recipes;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.UUID;
 
 public class RecipeDetailDTO {
     private Long id;
@@ -12,6 +13,8 @@ public class RecipeDetailDTO {
     private String creatorName;
     private LocalDateTime createdDate;
     private List<IngredientDTO> ingredients;
+
+    private UUID userId; // For ownership checking
 
     // Default Constructor
     public RecipeDetailDTO() {
@@ -79,5 +82,13 @@ public class RecipeDetailDTO {
 
     public void setIngredients(List<IngredientDTO> ingredients) {
         this.ingredients = ingredients;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
     }
 }

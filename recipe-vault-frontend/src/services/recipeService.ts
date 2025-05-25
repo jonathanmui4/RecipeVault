@@ -83,6 +83,19 @@ export class RecipeService {
     }
   }
 
+  // Fetch my recipes
+  async getMyRecipes(): Promise<Recipe[]> {
+    try {
+      const summaries = await apiService.get<BackendRecipeSummaryResponse[]>(
+        '/recipes/my-recipes'
+      );
+      return summaries.map((summary) => this.mapSummaryToFrontend(summary));
+    } catch (error) {
+      console.error('Error fetching my recipes:', error);
+      throw error;
+    }
+  }
+
   // Fetch single recipe by ID
   async getRecipeById(id: string | number): Promise<Recipe | null> {
     try {

@@ -46,23 +46,61 @@
       <el-table-column label="Actions" width="200" fixed="right">
         <template #default="scope">
           <div class="table-actions">
-            <el-button
-              size="small"
-              type="primary"
-              class="custom-button"
-              @click.stop="$emit('editRecipe', scope.row)"
-            >
-              <span class="icon-container"><Edit class="button-icon" /></span>
-              Edit
-            </el-button>
-            <el-button
-              size="small"
-              type="danger"
-              @click.stop="$emit('deleteRecipe', scope.row)"
-            >
-              <span class="icon-container"><Delete class="button-icon" /></span>
-              Delete
-            </el-button>
+            <!-- Show edit/delete only for user's recipes -->
+            <template v-if="canModifyRecipe(scope.row)">
+              <el-button
+                size="small"
+                type="primary"
+                class="custom-button"
+                @click.stop="$emit('editRecipe', scope.row)"
+              >
+                <span class="icon-container"><Edit class="button-icon" /></span>
+                Edit
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click.stop="$emit('deleteRecipe', scope.row)"
+              >
+                <span class="icon-container"
+                  ><Delete class="button-icon"
+                /></span>
+                Delete
+              </el-button>
+              <el-button
+                size="small"
+                type="primary"
+                class="custom-button"
+                @click.stop="$emit('editRecipe', scope.row)"
+              >
+                <span class="icon-container"><Edit class="button-icon" /></span>
+                Edit
+              </el-button>
+              <el-button
+                size="small"
+                type="danger"
+                @click.stop="$emit('deleteRecipe', scope.row)"
+              >
+                <span class="icon-container"
+                  ><Delete class="button-icon"
+                /></span>
+                Delete
+              </el-button>
+            </template>
+
+            <!-- Show view button for other recipes -->
+            <template v-else>
+              <el-button
+                size="small"
+                type="info"
+                class="custom-button-secondary"
+                @click.stop="$emit('rowClick', scope.row)"
+              >
+                <span class="icon-container"><View class="button-icon" /></span>
+                View
+              </el-button>
+              <span class="recipe-owner">{{ getOwnerText(scope.row) }}</span>
+            </template>
           </div>
         </template>
       </el-table-column>
@@ -82,9 +120,13 @@
 </template>
 
 <script setup lang="ts">
-import { Edit, Delete } from '@element-plus/icons-vue';
+import { Edit, Delete, View } from '@element-plus/icons-vue';
+import { useAuthStore } from '@/stores/auth';
+import { canUserModifyRecipe, getRecipeOwnerText } from '@/utils/recipeUtils';
 import DifficultyBadge from '@/components/ui/DifficultyBadge.vue';
 import type { Recipe } from '@/types/recipe';
+
+const authStore = useAuthStore();
 
 defineProps<{
   recipes: Recipe[];
@@ -101,6 +143,15 @@ defineEmits<{
   'update:currentPage': [page: number];
   'update:pageSize': [size: number];
 }>();
+
+// Check if current user can modify this recipe
+const canModifyRecipe = (recipe: Recipe): boolean => {
+  return canUserModifyRecipe(recipe, authStore.user);
+};
+
+const getOwnerText = (recipe: Recipe): string => {
+  return getRecipeOwnerText(recipe, authStore.user);
+};
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString();
@@ -124,6 +175,14 @@ const formatDate = (dateString: string) => {
 .table-actions {
   display: flex;
   gap: 0.5rem;
+  align-items: center;
+}
+
+.recipe-owner {
+  font-size: 0.8rem;
+  color: var(--primary-color);
+  font-style: italic;
+  margin-left: 0.5rem;
 }
 
 .el-pagination {
@@ -148,6 +207,11 @@ const formatDate = (dateString: string) => {
   .table-actions {
     flex-direction: column;
     gap: 0.25rem;
+  }
+
+  .recipe-owner {
+    margin-left: 0;
+    margin-top: 0.25rem;
   }
 }
 </style>

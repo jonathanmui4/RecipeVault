@@ -44,6 +44,7 @@
         </el-select>
 
         <el-button
+          v-if="authStore.isAuthenticated"
           type="primary"
           class="custom-button"
           size="large"
@@ -52,13 +53,27 @@
           <span class="icon-container"><Plus class="button-icon" /></span>
           Create Recipe
         </el-button>
+
+        <el-button
+          v-else
+          type="primary"
+          class="custom-button"
+          size="large"
+          @click="$router.push('/login')"
+        >
+          <span class="icon-container"><Lock class="button-icon" /></span>
+          Login to Create
+        </el-button>
       </div>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Search, Plus } from '@element-plus/icons-vue';
+import { Search, Plus, Lock } from '@element-plus/icons-vue';
+import { useAuthStore } from '@/stores/auth';
+
+const authStore = useAuthStore();
 
 defineProps<{
   search: string;

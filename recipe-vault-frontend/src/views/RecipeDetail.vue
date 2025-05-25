@@ -19,7 +19,9 @@
           </div>
         </div>
         <div class="header-actions">
+          <!-- Show edit button only for recipe owner -->
           <el-button
+            v-if="canEditRecipe"
             type="primary"
             class="custom-button"
             size="large"
@@ -27,6 +29,17 @@
           >
             <Edit />
             Edit Recipe
+          </el-button>
+          <!-- Show login prompt for guests -->
+          <el-button
+            v-else-if="!authStore.isAuthenticated"
+            type="primary"
+            class="custom-button"
+            size="large"
+            @click="$router.push('/login')"
+          >
+            <Lock />
+            Login to Create Recipes
           </el-button>
           <el-button
             class="custom-button-secondary"
@@ -119,17 +132,26 @@ import {
   User,
   List,
   Document,
+  Lock,
 } from '@element-plus/icons-vue';
 import { useRecipeStore } from '@/stores/recipe';
 import { useUIStore } from '@/stores/ui';
+import { useAuthStore } from '@/stores/auth';
+import { canUserModifyRecipe } from '@/utils/recipeUtils';
 import DifficultyBadge from '@/components/ui/DifficultyBadge.vue';
 import IngredientsList from '@/components/recipe/IngredientsList.vue';
 
 const recipeStore = useRecipeStore();
 const uiStore = useUIStore();
+const authStore = useAuthStore();
 const route = useRoute();
 
 const recipe = computed(() => recipeStore.currentRecipe);
+
+// Check if current user can edit this recipe
+const canEditRecipe = computed(() => {
+  return canUserModifyRecipe(recipe.value, authStore.user);
+});
 
 const formatDate = (dateString: string) => {
   return new Date(dateString).toLocaleDateString('en-US', {

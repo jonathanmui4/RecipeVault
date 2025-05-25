@@ -51,6 +51,15 @@ class ApiService {
         const code = error.code;
         const data = error.response?.data;
 
+        // Handle authentication errors
+        if (status === 401) {
+          // Token expired or invalid - trigger logout
+          import('@/stores/auth').then(({ useAuthStore }) => {
+            const authStore = useAuthStore();
+            authStore.logout();
+          });
+        }
+
         throw new ApiError(message, status, code, data);
       }
     );
@@ -86,6 +95,15 @@ class ApiService {
     } else {
       return error.message || 'An unexpected error occurred';
     }
+  }
+
+  // For auth token management
+  setAuthToken(token: string): void {
+    this.client.defaults.headers.common['Authorization'] = `Bearer ${token}`;
+  }
+
+  removeAuthToken(): void {
+    delete this.client.defaults.headers.common['Authorization'];
   }
 
   async get<T>(endpoint: string): Promise<T> {

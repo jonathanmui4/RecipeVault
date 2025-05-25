@@ -21,6 +21,7 @@ export interface Recipe {
   imageUrl?: string;
   creatorName: string;
   createdDate: string;
+  userId?: string; // For backend user association
 }
 
 // Frontend form data (what my form components work with)
