@@ -1,4 +1,4 @@
-package com.recipevault.backend.dto;
+package com.recipevault.backend.dto.recipes;
 
 import java.time.LocalDateTime;
 import java.util.List;

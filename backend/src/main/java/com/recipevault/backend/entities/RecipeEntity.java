@@ -40,6 +40,11 @@ public class RecipeEntity {
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientEntity> ingredients = new ArrayList<>();
 
+    // Link recipe to user (nullable for existing data)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
+    private UserEntity user;
+
     public Long getId() {
         return id;
     }
@@ -112,5 +117,21 @@ public class RecipeEntity {
     public void removeIngredient(IngredientEntity ingredient) {
         ingredients.remove(ingredient);
         ingredient.setRecipe(null);
+    }
+
+    public UserEntity getUser() {
+        return user;
+    }
+
+    public void setUser(UserEntity user) {
+        this.user = user;
+    }
+
+    // Helper method to get creator name from user or fallback to creatorName
+    public String getEffectiveCreatorName() {
+        if (user != null) {
+            return user.getFirstName() + " " + user.getLastName();
+        }
+        return creatorName != null ? creatorName : "Unknown";
     }
 }

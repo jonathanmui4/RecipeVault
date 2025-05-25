@@ -12,6 +12,10 @@ Backend was developed with Java Springboot using Maven as a build tool and MySQL
 - Spring Boot web
 - h2 (Development db)
 - mysql-connector-j
+- mapstruct (Map dto to entities)
+- AWS s3 SDK
+- Spring Security
+- JWT libraries
 
 ## API routes
 - /api/recipes (Post) to create
@@ -19,8 +23,70 @@ Backend was developed with Java Springboot using Maven as a build tool and MySQL
 - /api/recipes/{id} (Get) Retrieve a specific recipe by ID
 - /api/recipes/{id} (Put) Update a recipe by ID
 - /api/recipes/{id} (Delete) Delete a recipe by ID
+- /api/images/upload Uploads image to s3
+- /api/images/{imgurl} (Delete) Deletes img from s3
+- /api/register (POST) Registers new users
+- /api/login (POST) Login user
+- /api/check-username (GET) Checks if user with username exists
+- /api/check-email (GET) Checks if user with email exists
 
-## 📬 API Postman Test Results
+## 📬 Running Postman API tests for user auth
+
+1. Import to Postman
+
+- Copy the JSON in `API_Test_Collection.json`
+- Open Postman → Import → Raw text → Paste the JSON
+C- lick Import
+
+2. Setup Environment (Optional but Recommended)
+
+- Create new environment called "RecipeVault Local"
+- Add these variables:
+```
+baseUrl: http://localhost:9000/api
+authToken: (leave empty)
+```
+
+3. Test Flow (Recommended Order)
+
+**Authentication Flow:**
+
+- Register New User → Creates random test user
+- Login User → Auto-saves JWT token
+- Check Username/Email → Validates availability endpoints
+
+**Recipe Testing:**
+
+- Get All Recipes (Public) → Auto-saves a recipe ID for testing
+- Create Recipe (Authenticated) → Creates your recipe
+- Get My Recipes → Shows only your recipes
+- Update My Recipe → Tests ownership
+- Try Update Someone Else's Recipe → Should get 403 Forbidden
+
+**Security Testing:**
+
+- Create Recipe Without Token → Should get 401
+- Various unauthorized access tests
+
+4. Key Features
+
+🔄 Automatic token management - Login saves token for all requests
+✅ Built-in test assertions - Each request validates responses
+🎲 Dynamic data - Uses random usernames/emails to avoid conflicts
+📊 Test results - See pass/fail status for each request
+🔗 Variable chaining - Requests use data from previous responses
+
+5. Quick Start Testing
+
+- Start your Spring Boot app
+- Run requests in this order:
+
+  1. Register New User
+  2. Login User
+  3. Create Recipe (Authenticated)
+  4. Try Update Someone Else's Recipe (should fail)
+
+## 📬 API Postman Test Results for recipe CRUD
 
 ### ✅ **Create Recipe**
 - **Endpoint:** `POST http://localhost:9000/api/recipes`

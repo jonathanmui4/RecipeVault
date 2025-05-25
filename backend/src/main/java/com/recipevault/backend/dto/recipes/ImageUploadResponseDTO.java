@@ -1,4 +1,4 @@
-package com.recipevault.backend.dto;
+package com.recipevault.backend.dto.recipes;
 
 public class ImageUploadResponseDTO {
     private String imageUrl;

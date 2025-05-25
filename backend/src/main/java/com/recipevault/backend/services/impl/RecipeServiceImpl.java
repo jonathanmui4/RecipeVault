@@ -1,12 +1,14 @@
 package com.recipevault.backend.services.impl;
 
-import com.recipevault.backend.dto.RecipeCreateDTO;
-import com.recipevault.backend.dto.RecipeDetailDTO;
-import com.recipevault.backend.dto.RecipeSummaryDTO;
-import com.recipevault.backend.dto.RecipeUpdateDTO;
+import com.recipevault.backend.dto.recipes.RecipeCreateDTO;
+import com.recipevault.backend.dto.recipes.RecipeDetailDTO;
+import com.recipevault.backend.dto.recipes.RecipeSummaryDTO;
+import com.recipevault.backend.dto.recipes.RecipeUpdateDTO;
 import com.recipevault.backend.entities.RecipeEntity;
+import com.recipevault.backend.entities.UserEntity;
 import com.recipevault.backend.enums.Difficulty;
 import com.recipevault.backend.exceptions.ResourceNotFoundException;
+import com.recipevault.backend.exceptions.UnauthorizedAccessException;
 import com.recipevault.backend.mapper.RecipeMapper;
 import com.recipevault.backend.repositories.RecipeRepository;
 import com.recipevault.backend.services.RecipeService;
@@ -42,17 +44,32 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public RecipeDetailDTO createRecipe(RecipeCreateDTO recipeCreateDTO) {
+    public RecipeDetailDTO createRecipe(RecipeCreateDTO recipeCreateDTO, UserEntity user) {
         RecipeEntity recipe = recipeMapper.toEntity(recipeCreateDTO);
+
+        // Associate recipe with user
+        recipe.setUser(user);
+
+        // Set creator name from user's full name
+        String creatorName = (user.getFirstName() != null ? user.getFirstName() : "") +
+                " " +
+                (user.getLastName() != null ? user.getLastName() : "");
+        recipe.setCreatorName(creatorName.trim());
+
         RecipeEntity savedRecipe = recipeRepository.save(recipe);
         return recipeMapper.toDetailDTO(savedRecipe);
     }
 
     @Override
     @Transactional
-    public RecipeDetailDTO updateRecipe(Long id, RecipeUpdateDTO updateDTO) {
+    public RecipeDetailDTO updateRecipe(Long id, RecipeUpdateDTO updateDTO, UserEntity user) {
         RecipeEntity existingRecipe = recipeRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Recipe not found with id: " + id));
+
+        // Check ownership - only recipe owner can update
+        if (!isRecipeOwner(existingRecipe, user)) {
+            throw new UnauthorizedAccessException("You can only update your own recipes");
+        }
 
         // Update fields if provided in the DTO
         if (updateDTO.getTitle() != null) {
@@ -88,10 +105,47 @@ public class RecipeServiceImpl implements RecipeService {
 
     @Override
     @Transactional
-    public void deleteRecipe(Long id) {
-        if (!recipeRepository.existsById(id)) {
-            throw new ResourceNotFoundException("Recipe not found with id: " + id);
+    public void deleteRecipe(Long id, UserEntity user) {
+        RecipeEntity recipe = recipeRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found with id: " + id));
+
+        // Check ownership - only recipe owner can delete
+        if (!isRecipeOwner(recipe, user)) {
+            throw new UnauthorizedAccessException("You can only delete your own recipes");
         }
+
         recipeRepository.deleteById(id);
+    }
+
+    @Override
+    public List<RecipeSummaryDTO> getUserRecipes(UserEntity user) {
+        List<RecipeEntity> userRecipes = recipeRepository.findByUserOrderByCreatedDateDesc(user);
+        return recipeMapper.toSummaryDTOList(userRecipes);
+    }
+
+    @Override
+    public boolean isRecipeOwner(Long recipeId, UserEntity user) {
+        RecipeEntity recipe = recipeRepository.findById(recipeId)
+                .orElseThrow(() -> new ResourceNotFoundException("Recipe not found with id: " + recipeId));
+        return isRecipeOwner(recipe, user);
+    }
+
+    // Private helper method to check ownership
+    private boolean isRecipeOwner(RecipeEntity recipe, UserEntity user) {
+        // Handle existing recipes that don't have a user assigned
+        if (recipe.getUser() == null) {
+            // Option 1: Allow anyone to modify legacy recipes
+//            return true;
+
+            // Option 2: Don't allow modification of legacy recipes
+             return false;
+
+            // Option 3: Check by creator name (if you want to migrate data)
+            // String userFullName = user.getFirstName() + " " + user.getLastName();
+            // return userFullName.equals(recipe.getCreatorName());
+        }
+
+        // For recipes with users assigned, check if IDs match
+        return recipe.getUser().getId().equals(user.getId());
     }
 }

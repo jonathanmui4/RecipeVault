@@ -1,9 +1,9 @@
 package com.recipevault.backend.mapper;
 
-import com.recipevault.backend.dto.RecipeCreateDTO;
-import com.recipevault.backend.dto.RecipeDetailDTO;
-import com.recipevault.backend.dto.RecipeSummaryDTO;
-import com.recipevault.backend.dto.RecipeUpdateDTO;
+import com.recipevault.backend.dto.recipes.RecipeCreateDTO;
+import com.recipevault.backend.dto.recipes.RecipeDetailDTO;
+import com.recipevault.backend.dto.recipes.RecipeSummaryDTO;
+import com.recipevault.backend.dto.recipes.RecipeUpdateDTO;
 import com.recipevault.backend.entities.IngredientEntity;
 import com.recipevault.backend.entities.RecipeEntity;
 import org.mapstruct.AfterMapping;

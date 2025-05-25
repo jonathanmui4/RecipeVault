@@ -1,14 +1,20 @@
 package com.recipevault.backend.controller;
 
-import com.recipevault.backend.dto.RecipeCreateDTO;
-import com.recipevault.backend.dto.RecipeDetailDTO;
-import com.recipevault.backend.dto.RecipeSummaryDTO;
-import com.recipevault.backend.dto.RecipeUpdateDTO;
+import com.recipevault.backend.dto.recipes.RecipeCreateDTO;
+import com.recipevault.backend.dto.recipes.RecipeDetailDTO;
+import com.recipevault.backend.dto.recipes.RecipeSummaryDTO;
+import com.recipevault.backend.dto.recipes.RecipeUpdateDTO;
+import com.recipevault.backend.entities.UserEntity;
+import com.recipevault.backend.exceptions.ResourceNotFoundException;
+import com.recipevault.backend.repositories.UserRepository;
+import com.recipevault.backend.security.UserPrincipal;
 import com.recipevault.backend.services.RecipeService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -26,10 +32,23 @@ import java.util.List;
 @Validated
 public class RecipeController {
     private final RecipeService recipeService;
+    // Add this field injection
+    private final UserRepository userRepository;
 
     @Autowired
-    public RecipeController(RecipeService recipeService) {
+    public RecipeController(RecipeService recipeService, UserRepository userRepository) {
         this.recipeService = recipeService;
+        this.userRepository = userRepository;
+    }
+
+    private UserEntity getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication != null && authentication.getPrincipal() instanceof UserPrincipal) {
+            UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
+            return userRepository.findById(userPrincipal.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("User not found"));
+        }
+        throw new RuntimeException("No authenticated user found");
     }
 
     @GetMapping
@@ -44,10 +63,18 @@ public class RecipeController {
         // ResourceNotFoundException is handled by GlobalExceptionHandler
     }
 
+    @GetMapping("/my-recipes")
+    public ResponseEntity<List<RecipeSummaryDTO>> getMyRecipes() {
+        UserEntity currentUser = getCurrentUser();
+        List<RecipeSummaryDTO> userRecipes = recipeService.getUserRecipes(currentUser);
+        return ResponseEntity.ok(userRecipes);
+    }
+
     @PostMapping
     public ResponseEntity<RecipeDetailDTO> createRecipe(
             @Valid @RequestBody RecipeCreateDTO recipeCreateDTO) {
-        RecipeDetailDTO createdRecipe = recipeService.createRecipe(recipeCreateDTO);
+        UserEntity currentUser = getCurrentUser();
+        RecipeDetailDTO createdRecipe = recipeService.createRecipe(recipeCreateDTO, currentUser);
         return new ResponseEntity<>(createdRecipe, HttpStatus.CREATED);
     }
 
@@ -56,16 +83,15 @@ public class RecipeController {
     public ResponseEntity<RecipeDetailDTO> updateRecipe(
             @PathVariable Long id,
             @Valid @RequestBody RecipeUpdateDTO recipeUpdateDTO) {
-        RecipeDetailDTO updatedRecipe = recipeService.updateRecipe(id, recipeUpdateDTO);
+        UserEntity currentUser = getCurrentUser();
+        RecipeDetailDTO updatedRecipe = recipeService.updateRecipe(id, recipeUpdateDTO, currentUser);
         return ResponseEntity.ok(updatedRecipe);
-        // ResourceNotFoundException is handled by GlobalExceptionHandler
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRecipe(@PathVariable Long id) {
-        recipeService.deleteRecipe(id);
-        // Returns HTTP 204, no response body -> best practice for Delete
+        UserEntity currentUser = getCurrentUser();
+        recipeService.deleteRecipe(id, currentUser);
         return ResponseEntity.noContent().build();
-        // ResourceNotFoundException is handled by GlobalExceptionHandler
     }
 }

@@ -1,34 +1,30 @@
-package com.recipevault.backend.dto;
+package com.recipevault.backend.dto.recipes;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public class RecipeCreateDTO {
-    @NotBlank(message = "Title is required")
+public class RecipeUpdateDTO {
     @Size(max = 255, message = "Title must be less than 255 characters")
     private String title;
 
-    @NotNull(message = "Difficulty is required")
     @Pattern(regexp = "EASY|MEDIUM|HARD", message = "Difficulty must be EASY, MEDIUM, or HARD")
     private String difficulty;
 
-    @NotBlank(message = "Instructions are required")
     private String instructions;
 
     private String imageUrl;
 
-    @NotBlank(message = "Creator name is required")
     private String creatorName;
 
     private List<String> ingredientNames;
 
-    public RecipeCreateDTO() {
+    // Default constructor
+    public RecipeUpdateDTO() {
     }
 
+    // Getters and setters
     public String getTitle() {
         return title;
     }
